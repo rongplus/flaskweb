@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Notes</h1>
+    <form method="post">
+        <h1>Enter your question</h1>
+        
+        <textarea id="tt_question" name="question" rows="15" cols="100"></textarea>
+        <input type="checkbox" id="correct_ck" name="correct" value="1"> Correct
+     
+        <input type="submit" value="Save">
+    </form>
+
+    {% if questions %}
+        <h2>Welcome to the Test Page</h2>
+        <!-- Add home page content -->
+        <h2>Welcome to the Test Page</h2>
+        <li> {{questions[0]}}</li><br>
+        <li> {{questions[1]}}</li><br>
+        <li> {{questions[2]}}</li><br>
+        <li> {{questions[3]}}</li><br>
+        <h4>{{questions[4]}}</h4>
+        <h4>{{questions[5]}}</h4>
+        <h4>{{questions[6]}}</h4>
+    {% endif %}
+{% endblock %}

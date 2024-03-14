@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life Quesion Site</title>
+    <!-- Add your CSS stylesheets or links here -->
+    <style>
+        ul {
+          list-style-type: none;
+          margin: 0;
+          padding: 0;
+          overflow: hidden;
+          background-color: #333;
+        
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
+
+        
+        li {
+          float: left;
+        }
+        li {
+  border-right: 1px solid #bbb;
+}
+
+li:last-child {
+  border-right: none;
+}
+        li a {
+          display: block;
+          color: white;
+          text-align: center;
+          padding: 14px 16px;
+          text-decoration: none;
+        }
+        
+        li a:hover:not(.active) {
+          background-color: #111;
+        }
+        
+        .active {
+          background-color: #04AA6D;
+        }
+        </style>
+</head>
+<body>
+    <header>
+        <!-- Your header content (e.g., logo, navigation) -->     
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/about">About</a></li>
+                <!-- Add other navigation links -->
+                <li><a href="/addright">Right Qustion</a></li>
+                <li><a href="/addwrong">Wrong Question</a></li>
+                <li><a href="/questions">Show All</a></li>
+                <div style="float:right;">
+                    
+                    <li><a href="/questions">Register/Login</a></li>
+                  </div>
+
+            </ul>
+
+           
+        </nav>
+    </header>
+
+    <div class="content">
+        <!-- Content specific to each page will go here -->
+        {% block content %}{% endblock %}
+    </div>
+
+    <footer center style="padding:5px; background-color:#acb3b9; text-align:center;">
+        <p>Author: Rong Refsnes  
+        <a href="mailto:hege@example.com"> rong@example.com</a></p>
+      </footer>
+</body>
+</html>
