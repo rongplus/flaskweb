@@ -14,7 +14,7 @@ def saveQuestions(question,answerA ,answerB ,answerC ,
         answerD ,answer ,rotation,correct ,module):
     try:
         sql = (
-        "INSERT IGNORE INTO insurance (question,answerA ,answerB ,answerC ,"
+        "INSERT IGNORE INTO insuranceB (question,answerA ,answerB ,answerC ,"
         " answerD ,answer ,rotation ,correct ,module) "
         " VALUES (%s, %s, %s, %s,%s,%s,%s,%s,%s) "
         )

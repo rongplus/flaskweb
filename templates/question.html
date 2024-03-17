@@ -1,18 +1,35 @@
-<!-- templates/index.html -->
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Notes App</title>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block content %}
+<h1>...</h1>
     <h1>question</h1>
     <p>{{ question }}</p>
-    <h1>answers</h1>
-    <p>{{ answers }}</p>
-    <h1>rotation</h1>
-    <p>{{ rotation }}</p>
+    <h1>Options</h1>
+    <p>{{ answera }}</p>
+    <p>{{ answerb }}</p>
+    <p>{{ answerc }}</p>
+    <p>{{ answerd }}</p>
+    <h1>answer</h1>
+    <p>{{ answer }}</p>
+    <button onclick="myFunction()">Show Rotation</button>
+
+    <div id="myDIV" hidden>
+        <h1>rotation</h1>
+        <p>{{ rotation }}</p>
+    </div>
+    <script>
+        function myFunction() {
+          var x = document.getElementById("myDIV");
+          if (x.style.display === "none") {
+            x.style.display = "block";
+          } else {
+            x.style.display = "none";
+          }
+          x.style.display = "block";
+        }
+        </script>
+    
     <form method="post">
         <input type="submit" name="next_button" value="Next">
     </form>
-</body>
-</html>
+    {% endblock %}
