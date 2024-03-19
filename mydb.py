@@ -26,6 +26,27 @@ def saveQuestions(question,answerA ,answerB ,answerC ,
         print(f"Error saving note: {err}")
 
 
+def getAllQuestion():
+    #global cursor  # Use the global cursor   
+    try:
+        cursor = conn.cursor(buffered=True)
+        cursor.execute("SELECT * FROM notes")        
+        data = cursor.fetchall()
+        return data
+    except Exception as e:
+        return f"Error fetching records: {str(e)}"
+    
+def getModule2Question():
+    #global cursor  # Use the global cursor   
+    try:
+        cursor = conn.cursor(buffered=True)
+        cursor.execute("SELECT * FROM insuranceB where module=2")        
+        data = cursor.fetchall()
+        return data
+    except Exception as e:
+        return f"Error fetching records: {str(e)}"   
+    
+
 def save_note_to_db(question, answers, rotation):
     try:
         sql = (
@@ -51,14 +72,3 @@ def save_note_to_db1(question, answers, rotation):
         conn.commit()
     except mysql.connector.Error as err:
         print(f"Error saving note: {err}")
-
-
-def getAllQuestion():
-    #global cursor  # Use the global cursor   
-    try:
-        cursor = conn.cursor(buffered=True)
-        cursor.execute("SELECT * FROM notes")        
-        data = cursor.fetchall()
-        return data
-    except Exception as e:
-        return f"Error fetching records: {str(e)}"

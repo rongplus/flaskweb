@@ -23,6 +23,28 @@ def showone():
                                        answera=record[2],answerb=record[3],answerc=record[4],answerd=record[5],
                                        answer=record[6],rotation=record[7])
     
+def getModule2Question():
+    global cursor  # Use the global cursor
+
+    if request.method == "POST":
+        next_button = request.form.get("next_button")
+        if next_button:
+            record = cursor.fetchone()
+            if record:
+                return render_template("modulequestions.html", question=record[1],
+                                       answera=record[2],answerb=record[3],answerc=record[4],answerd=record[5],
+                                       answer=record[6],rotation=record[7])
+            else:
+                return "No more records."
+        return redirect(url_for("showone"))
+
+    cursor.execute("SELECT * FROM insuranceB where module=2")
+    record = cursor.fetchone()
+   
+    return render_template("modulequestions.html", question=record[1],
+                                       answera=record[2],answerb=record[3],answerc=record[4],answerd=record[5],
+                                       answer=record[6],rotation=record[7])
+
 
 def addright():
     if request.method == "POST":        

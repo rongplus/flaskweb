@@ -59,7 +59,10 @@ def questions():
     data = getAllQuestion()
     return render_template('questions.html', records=data)
     
-    
+@app.route('/modulequestions')
+def modulequestions():     
+    data = getModule2Question()
+    return render_template('modulequestions.html', records=data)   
 
 app.add_url_rule('/showone', methods=["GET", "POST"], view_func=webapi.showone)
 app.add_url_rule('/addRightAnserQuestion', methods=["GET", "POST"], view_func=webapi.addRightAnserQuestion)
