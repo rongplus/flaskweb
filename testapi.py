@@ -1,10 +1,32 @@
 from flask import Flask, render_template, request, redirect, url_for
 import markdown.extensions.fenced_code
 #pip install Flask-Markdown
-from openai import OpenAI
-from ollama import generate
-from ollama import AsyncClient
+import requests
+from flask import Flask, request, jsonify
 
+
+import jwt
+from datetime import datetime, timezone,timedelta
+# ??????JWT??
+JWT_SECRET_KEY = 'your-secret-key'
+
+
+def post_request(api_url, data):
+    """
+    Send a POST request to the specified API URL with the given data.
+
+    :param api_url: str - The URL of the API endpoint.
+    :param data: dict - The data to be sent in the POST request.
+    :return: requests.Response - The response object from the API.
+    """
+    try:
+        response = requests.post(api_url, json=data)
+        response.raise_for_status()
+        return response
+    except requests.exceptions.HTTPError as err:
+        print(f"HTTP error occurred: {err}")
+    except Exception as err:
+        print(f"An error occurred: {err}")
 
 def test():
     if request.method == "POST": 
@@ -16,7 +38,6 @@ def test():
     elif request.method =="GET":
         return "test get"
     
-
 def test1():
     if request.method == "POST": 
            name = request.get_json()     
@@ -53,39 +74,64 @@ def template2():
     return render_template('template.html', content=md_template_string )
 
 
+def tellMeOllamaJoke():
+     #use Ollama 2
+    response = post_request('http://localhost:11434/api/generate', {"model":"llama2", "prompt":"Tell me a funny joke about Windows?", "stream": False})
+    print(response.json()["response"])
 
-def tellJoke():
-    response = generate('llama2', 'Tell me a funny joke')
-    print(response['response'])
-    return render_template("joke.html",joke=response['response'])
 
-def tellJoke1():
-    completion = client.chat.completions.create(
-    model="gpt-3.5-turbo",
-    temperature = 0.2,
-    messages=[
-        {"role": "system", "content": "You are a helpful assistant."},
-        {"role": "user", "content": "Tell me a joke."}
-    ]
-    )
+def creatToken(username):
+    payload = {
+                'user_id': username,
+                'exp': datetime.now(timezone.utc) + timedelta(minutes=30)
+            }
 
-    #print(completion.choices[0].message)
-    a = completion.choices[0].message.content.split('\n') 
-
-    return render_template("joke.html",joke=a)
-
-def askQuestion():
-    question = ''
-    if request.method == "POST":   
-        question = request.form.get("question")
-    if question:
-        completion = client.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": question}
-        ]
-        )
-        return render_template("askme.html",joke=completion.choices[0].message.content)
+            # ?????? JWT Token
+    print(payload)
     
-    return render_template("askme.html")
+    jwt_token = jwt.encode(payload=payload, key=JWT_SECRET_KEY, algorithm='HS256')
+    return jwt_token
+
+def decodeToken(token):
+    # ?? Token
+    decoded_token = jwt.decode(token, JWT_SECRET_KEY,algorithms=['HS256'],verify=True, options={'verify_exp':False})
+    print("0-----------------------------")
+
+    # ?? Payload ????
+    user_id = decoded_token['user_id']
+    expiration_time = decoded_token['exp']
+    b = datetime.fromtimestamp(expiration_time,tz=timezone.utc)
+    print(user_id,b)
+    a = datetime.now(timezone.utc) 
+    print(a,b)
+
+    # ?? Token ????
+    if a > b :
+        print('Token ???')
+        return user_id+" Token ???"
+    else:
+        print('Token ???')
+        return user_id+" Token ???"
+    
+ 
+
+def apiLogin():
+    if request.method == "POST": 
+           
+           web_json = request.get_json() 
+           return creatToken(web_json['name'])
+           print(web_json)
+           ret = decodeToken(web_json["token"])
+           return "welcome  " +web_json["name"] + ret
+    elif request.method =="GET":
+        name = request.args.get('name') 
+        return "abcd"
+
+def apiGetData():
+    if request.method == "POST":            
+           web_json = request.get_json()           
+           print(web_json)
+           ret = decodeToken(web_json["token"])
+           return "welcome  " +web_json["name"] + ret
+    elif request.method =="GET":
+        name = request.args.get('name') 
