@@ -28,6 +28,11 @@ app.add_url_rule('/addWrongAnserQuestion', methods=["GET", "POST"], view_func=we
 app.add_url_rule('/joke', methods=["GET", "POST"], view_func=webapi.tellJoke)
 #app.add_url_rule('/askme', methods=["GET", "POST"], view_func=webapi.askQuestion)
 app.add_url_rule('/save_text', methods=['POST'], view_func=webapi.save_text)
+app.add_url_rule('/ai', methods=['POST','GET'], view_func=webapi.ai)
+app.add_url_rule('/upload', methods=['POST'], view_func=webapi.upload)
+
+app.add_url_rule('/audioai', methods=['get'], view_func=webapi.audioai)
+app.add_url_rule('/audio', methods=['POST'], view_func=webapi.audio)
 
 #api
 app.add_url_rule('/test', methods=["GET", "POST"], view_func=testapi.test)

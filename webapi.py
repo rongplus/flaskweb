@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, redirect, url_for
 from mydb import *
 
 import requests
+import httpx
+from  speech2text import *
 
 def home():   
     return render_template("home.html")
@@ -44,7 +46,7 @@ def getModule2Question():
                 return "No more records."
         return redirect(url_for("showone"))
 
-    cursor.execute("SELECT * FROM insuranceB where module=2")
+    cursor.execute("SELECT * FROM insurance4A where module=2")
     record = cursor.fetchone()
    
     return render_template("modulequestions.html", question=record[1],
@@ -75,11 +77,9 @@ def addwrong():
 def search():
     if request.method == "POST":
         con= request.form.get("question")
-        record = searchDB(con)
-        if record:
-            return render_template("question.html", question=record[1],
-                                       answera=record[2],answerb=record[3],answerc=record[4],answerd=record[5],
-                                       answer=record[6],rotation=record[7])
+        all = searchDB(con)
+        if all:
+            return render_template("questions.html", records=all)
         else:
             render_template("search.html")
     return render_template("search.html")
@@ -138,14 +138,14 @@ def addWrongAnserQuestion():
             answer = con[pos1+10:pos2]
             rotation = con[pos2+10:]
             
-            saveQuestions(question,ans_a,ans_b,ans_c,ans_d,answer,rotation,cor,2)
+            saveWrongQuestions(question,ans_a,ans_b,ans_c,ans_d,answer,rotation,cor,2)
             return render_template("index.html", questions=[question,ans_a,ans_b,ans_c,ans_d,answer,rotation,"Wrong"])
           
 
     return render_template("index.html")
 
 def tellJoke():
-    response = post_request('http://localhost:11434/api/generate', {"model":"llama2", "prompt":"Tell me a funny joke about Windows?", "stream": False})
+    response = post_request('http://localhost:11434/api/generate', {"model":"llama2", "prompt":"Tell me a funny joke?", "stream": False})
     print(response.json()["response"])
     return render_template("joke.html",joke=response.json()["response"])
 
@@ -198,8 +198,6 @@ def post_request(api_url, data):
     except Exception as err:
         print(f"An error occurred: {err}")
 
-
-
 def save_text():
     text_data = request.json.get('text', '')
     # Save the text_data to a file or database
@@ -238,7 +236,7 @@ def add():
             ans_d = con[pos1:pos2]
             pos1 = pos2
             pos2 = con.find('Rationale:')
-            answer = con[pos1+10:pos2]
+            answer = con[pos1+11:pos2]
             rotation = con[pos2+10:]
             
             saveQuestions(question,ans_a,ans_b,ans_c,ans_d,answer,rotation,cor,2)
@@ -253,3 +251,37 @@ def add():
 def questions():     
     data = getAllQuestion()
     return render_template('questions.html', records=data)
+
+
+def ai():   
+    if request.method == "POST":
+        print("post")
+        audio = request.files['audio_data']
+    else:
+        return render_template("test2.html")
+    
+
+def upload():
+    f_name = request.files['audio_data']
+
+    speech_config = speechsdk.SpeechConfig(subscription=speech_key, region=service_region)
+    speech_config.speech_recognition_language="zh-CN"
+    audio_config = speechsdk.AudioConfig(filename=f_name)
+    speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config, audio_config=audio_config)
+
+    result = speech_recognizer.recognize_once_async().get()
+
+    # ??????    
+    return "Success " + result
+
+def audioai():
+    return render_template('audiogui.html')
+
+def audio():
+    with open('d:/test/audio.wav', 'wb') as f:
+        f.write(request.data)
+
+    abc= from_file('d:/test/audio.wav')
+    print("------------",abc)
+    #proc = run(['ffprobe', '-of', 'default=noprint_wrappers=1', '/tmp/audio.wav'], text=True, stderr=PIPE)
+    return abc
