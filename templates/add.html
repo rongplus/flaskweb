@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h3>Notes</h3>
+    <h2>Welcome to the Save Question Page</h2>
+    {% if questions %}
+        
+      <h2>Save  {{questions[7]}} Quesion is:</h2>
+         {{questions[0]}}
+    {% endif %}
+<br>
+
+<script>
+    function check(browser) {
+      document.getElementById("module").value=browser;
+      document.getElementById("module1").value=browser;
+    }
+
+    function reset(m)
+    {
+        document.getElementById("module").value=m;
+        document.getElementById("module1").value=m;
+    }
+
+    
+    </script>
+
+<input type="radio" name="browser" onclick="check(this.value)" value="1" {% if md=="1" %} checked {% endif %} >Ethics and Professional Practice
+<input type="radio" name="browser" onclick="check(this.value)" value="2" {% if md=="2" %} checked {% endif %}>Life Insurance
+<input type="radio" name="browser" onclick="check(this.value)" value="3" {% if md=="3" %} checked {% endif %} >Accident and Sickness Insurance
+<input type="radio" name="browser" onclick="check(this.value)" value="4" {% if md=="4" %} checked {% endif %}>Segregated Funds and Annuities
+<br>
+
+
+
+
+
+
+    <form method="post" action="/addRightAnserQuestion">
+        
+        <h1>Enter Right question</h1> <input type="hidden"  id="module" size="20" name="module"  value={{md}} >
+        
+        <textarea id="tt_question" name="question" rows="15" cols="100"></textarea>
+      
+        <input type="submit" value="Save">
+    </form>
+    <form method="post" action="/addWrongAnserQuestion">
+        <h1>Enter Wrong question</h1>
+        <input type="hidden"  id="module1" size="20" name="module" value={{md}}>
+        
+        <textarea id="tt_question" name="question" rows="15" cols="100"></textarea>
+      
+        <input type="submit" value="Save">
+    </form>
+
+
+
+{% endblock %}

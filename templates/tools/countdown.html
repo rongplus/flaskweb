@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+/* Add your CSS styles here if needed */
+</style>
+</head>
+<body>
+
+<h1 id="headline">Countdown to my birthday</h1>
+<div class="container">
+  <span id="days">0d</span> :
+  <span id="hours">0h</span> :
+  <span id="minutes">0m</span> :
+  <span id="seconds">0s</span>
+</div>
+
+<script>
+var birthdayDate = new Date("June 10, 2023 00:00:00").getTime();
+
+function updateCountdown() {
+  var now = new Date().getTime();
+  var distance = birthdayDate - now;
+
+  var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+  var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+  document.getElementById("days").textContent = days + "d";
+  document.getElementById("hours").textContent = hours + "h";
+  document.getElementById("minutes").textContent = minutes + "m";
+  document.getElementById("seconds").textContent = seconds + "s";
+}
+
+setInterval(updateCountdown, 1000);
+</script>
+<!-- Display the countdown timer in an element -->
+<p id="demo"></p>
+
+<script>
+// Set the date we're counting down to
+var countDownDate = new Date("Jan 5, 2030 15:37:25").getTime();
+
+// Update the count down every 1 second
+var x = setInterval(function() {
+  var now = new Date().getTime();
+  var distance = countDownDate - now;
+
+  var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+  var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+  document.getElementById("demo").innerHTML = days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+
+  if (distance < 0) {
+    clearInterval(x);
+    document.getElementById("demo").innerHTML = "EXPIRED";
+  }
+}, 1000);
+</script>
+
+
+<div class="stopwatch">
+    <h1>Stopwatch</h1>
+    <div class="display">00:00:00</div>
+    <button class="start">Start</button>
+    <button class="stop">Stop</button>
+    <button class="reset">Reset</button>
+</div>
+<script>
+    const display = document.querySelector('.display');
+    let startTime = 0;
+    let intervalId;
+
+    function updateDisplay() {
+        const currentTime = new Date().getTime() - startTime;
+        const hours = Math.floor(currentTime / 3600000);
+        const minutes = Math.floor((currentTime % 3600000) / 60000);
+        const seconds = Math.floor((currentTime % 60000) / 1000);
+        display.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    document.querySelector('.start').addEventListener('click', () => {
+        if (!intervalId) {
+            startTime = new Date().getTime();
+            intervalId = setInterval(updateDisplay, 1000);
+        }
+    });
+
+    document.querySelector('.stop').addEventListener('click', () => {
+        clearInterval(intervalId);
+        intervalId = null;
+    });
+
+    document.querySelector('.reset').addEventListener('click', () => {
+        clearInterval(intervalId);
+        intervalId = null;
+        display.textContent = '00:00:00';
+    });
+</script>
+
+</body>
+</html>

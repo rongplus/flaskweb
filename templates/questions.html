@@ -4,7 +4,7 @@
     <h2>Welcome to the Questions Page</h2>
     <!-- Add home page content -->
     <h1>Records List</h1>
-    <table>
+    <table  border="1">
         <thead>
             <tr>
                 <th>question</th>
@@ -17,12 +17,24 @@
         <tbody>
             {% for record in records %}
                 <tr>
-                    <td>                        
-                        {{record[0]}}
-                    </td>
                     <td>{{ record[1] }}</td>
-                    <td>{{ record[2] }}</td>
-                    <td>{{ record[3] }}</td>
+                    <td>                        
+                        
+                        <p>{{record[2]}}</p>
+                        <p>{{record[3]}}</p>
+                        <p>{{record[4]}}</p>
+                        <p>{{record[5]}}</p>
+                    </td>
+                   
+                   
+                    <td>{{ record[7] }}</td>
+                     {% if record[8]==1 %}
+                        <td style="color:blue;">   {{ record[6] }}
+                        </td>
+                    {% else %} 
+                        <td  style="color:red;">   {{ record[6] }}
+                        </td>
+                    {% endif %}
                     <!-- Add other columns here -->
                 </tr>
             {% endfor %}

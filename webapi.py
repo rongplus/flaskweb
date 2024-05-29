@@ -1,13 +1,24 @@
 from flask import Flask, render_template, request, redirect, url_for
 from mydb import *
 
+import azure.cognitiveservices.speech as speechsdk
+import logging
 import requests
 import httpx
-from  speech2text import *
 
 def home():   
     return render_template("home.html")
 
+def life():   
+    return render_template("life.html")
+
+
+def ai():   
+    if request.method == "POST":
+        print("post")
+        audio = request.files['audio_data']
+    else:
+        return render_template("ai.html")
 
 def showone(): 
     global cursor  # Use the global cursor
@@ -53,27 +64,6 @@ def getModule2Question():
                                        answera=record[2],answerb=record[3],answerc=record[4],answerd=record[5],
                                        answer=record[6],rotation=record[7])
 
-
-def addright():
-    if request.method == "POST":        
-           return "addright"
-    elif request.method =="GET":
-        return "ABC"
-
-    return render_template("addright.html")
-
-def addwrong():
-     
-    if request.method == "POST":
-        question = request.form.get("question")
-        answers = request.form.get("answers")
-        rotation = request.form.get("rotation")
-        if question:
-            save_note_to_db1(question,answers,rotation)
-            return redirect(url_for("addwrong"))
-
-    return render_template("addwrong.html")
-
 def search():
     if request.method == "POST":
         con= request.form.get("question")
@@ -89,6 +79,7 @@ def addRightAnserQuestion():
     if request.method == "POST":
          con= request.form.get("question")
          cor = 1
+         m= request.form.get("module")
          
          if con:
             pos1 = con.find('a)')
@@ -109,8 +100,8 @@ def addRightAnserQuestion():
             answer = con[pos1+10:pos2]
             rotation = con[pos2+10:]
             
-            saveQuestions(question,ans_a,ans_b,ans_c,ans_d,answer,rotation,cor,2)
-            return render_template("index.html", questions=[question,ans_a,ans_b,ans_c,ans_d,answer,rotation,"Right"])
+            saveQuestions(question,ans_a,ans_b,ans_c,ans_d,answer,rotation,cor,m)
+            return render_template("index.html", questions=[question,ans_a,ans_b,ans_c,ans_d,answer,rotation,"Right"],md=m)
           
 
     return render_template("index.html")
@@ -118,6 +109,9 @@ def addRightAnserQuestion():
 def addWrongAnserQuestion():
     if request.method == "POST":
          con= request.form.get("question")
+         m= request.form.get("module")
+         print("module =" , m)
+         #app.logger.debug("Debug log level")
          cor = 0   
          if con:
             pos1 = con.find('a)')
@@ -138,8 +132,8 @@ def addWrongAnserQuestion():
             answer = con[pos1+10:pos2]
             rotation = con[pos2+10:]
             
-            saveWrongQuestions(question,ans_a,ans_b,ans_c,ans_d,answer,rotation,cor,2)
-            return render_template("index.html", questions=[question,ans_a,ans_b,ans_c,ans_d,answer,rotation,"Wrong"])
+            saveWrongQuestions(question,ans_a,ans_b,ans_c,ans_d,answer,rotation,cor,m)
+            return render_template("index.html", questions=[question,ans_a,ans_b,ans_c,ans_d,answer,rotation,"Wrong"],md=m)
           
 
     return render_template("index.html")
@@ -236,14 +230,15 @@ def add():
             ans_d = con[pos1:pos2]
             pos1 = pos2
             pos2 = con.find('Rationale:')
-            answer = con[pos1+11:pos2]
+            answer = con[pos1+12:pos2]
+            print("-----",answer)
             rotation = con[pos2+10:]
             
             saveQuestions(question,ans_a,ans_b,ans_c,ans_d,answer,rotation,cor,2)
-            return render_template("index.html", questions=[question,ans_a,ans_b,ans_c,ans_d,answer,rotation])
+            return render_template("add.html", questions=[question,ans_a,ans_b,ans_c,ans_d,answer,rotation])
           
 
-     return render_template("index.html")
+     return render_template("add.html")
 
 
 
@@ -253,12 +248,6 @@ def questions():
     return render_template('questions.html', records=data)
 
 
-def ai():   
-    if request.method == "POST":
-        print("post")
-        audio = request.files['audio_data']
-    else:
-        return render_template("test2.html")
     
 
 def upload():
@@ -285,3 +274,8 @@ def audio():
     print("------------",abc)
     #proc = run(['ffprobe', '-of', 'default=noprint_wrappers=1', '/tmp/audio.wav'], text=True, stderr=PIPE)
     return abc
+
+
+def wrongquestions():     
+    data = searchWrongDB()
+    return render_template('modulequestions.html', records=data) 

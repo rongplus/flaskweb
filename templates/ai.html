@@ -1,0 +1,127 @@
+<httml>
+
+<head>
+    
+</head>
+<body>
+    <h2>Welcome to the Test Page</h2>
+   <form method="post">
+    
+    <input type="file" accept="audio/*" capture id="recorder" />
+    <audio id="player" controls></audio>
+      <script>
+        const recorder = document.getElementById('recorder');
+        const player = document.getElementById('player');
+    
+        recorder.addEventListener('change', function (e) {
+          const file = e.target.files[0];
+          const url = URL.createObjectURL(file);
+          // Do something with the audio file.
+          player.src = url;
+        });
+      </script>
+    </audio>
+
+    <input type=”text” speech x-webkit-speech />
+    <button type="button" id="start-btn">开始录音</button>
+<button type="button" id="stop-btn">停止录音</button>
+<button type="button" id="play-btn">播放录音</button>
+<input type="submit" name="next_button" value="Next">
+
+    </form>
+    <div id="output"></div>
+<a href="https://www.misterma.com">Mr. Ma's Blog misterma.com</a>
+
+
+<script>
+    const startBtn = document.getElementById('start-btn');  // 开始录音按钮
+    const stopBtn = document.getElementById('stop-btn');  // 停止录音按钮
+    const playBtn = document.getElementById('play-btn');  // 播放录音按钮
+    let mediaRecorder = null;  // 存放 MediaRecorder
+    let audioData = [];  // 存储录音数据块
+    
+    // 开始录音按钮点击
+    startBtn.addEventListener('click', function()  {
+      // 请求麦克风权限
+      navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+        // 创建媒体记录
+        mediaRecorder = new MediaRecorder(stream, {mimeType: 'audio/webm'});
+        // 开始录制
+        mediaRecorder.start();
+
+        const chunks = [];
+
+      
+    
+        // 处理音频数据
+        mediaRecorder.addEventListener('dataavailable', ev => {
+          // 把数据块添加到数组
+          audioData.push(ev.data);
+        });
+    
+        // 录音停止
+        mediaRecorder.addEventListener('stop', () => {
+          // 把音频数据块转换为 Blob
+        //audioData = new Blob(audioData);
+        //recordedAudio.src = URL.createObjectURL(audioData);
+
+        //const formData = new FormData();
+        //formData.append('audio_data', blob, 'recording.wav');
+
+        const filename = "sound-file-" + new Date().getTime() + ".wav";
+
+        audioData = new Blob(audioData);
+
+            const formData = new FormData();
+            formData.append("audio_data", audioData, filename);
+            
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            }).then(async result => { 
+                document.getElementById("output").innerHTML = await result.text();
+            }).catch(error => { 
+                document.getElementById("output").innerHTML = "An error occurred: " + error;
+            })
+
+
+
+        });
+      }).catch(info => {
+        alert('无法获取麦克风权限！错误信息：' + info);
+      });
+    });
+    
+    // 停止录音按钮点击
+    stopBtn.addEventListener('click', () => {
+      mediaRecorder.stop();
+    });
+    
+    // 播放录音按钮点击
+    playBtn.addEventListener('click', () => {
+      if (audioData === null) return false;
+      // 创建一个 URL 资源对象给 Audio 读取
+      const audio = new Audio(URL.createObjectURL(audioData));
+      // 播放音频
+      audio.play();
+    });
+
+
+    function uploadSoundData(blob) {
+            const filename = "sound-file-" + new Date().getTime() + ".wav";
+            const formData = new FormData();
+            formData.append("audio_data", blob, filename);
+            
+            fetch('http://localhost:5000/upload', {
+                method: 'POST',
+                body: formData
+            }).then(async result => { 
+                document.getElementById("output").innerHTML = await result.text();
+            }).catch(error => { 
+                document.getElementById("output").innerHTML = "An error occurred: " + error;
+            })
+        }
+
+    </script>
+
+</body>
